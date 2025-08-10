@@ -1,6 +1,5 @@
 ﻿using PluginBase;
 using System.Diagnostics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Timer = System.Timers.Timer;
 
 namespace TestDataPlugin
