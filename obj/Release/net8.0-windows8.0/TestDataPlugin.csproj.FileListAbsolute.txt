@@ -12,3 +12,4 @@ C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Release\net8.0-window
 C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Release\net8.0-windows8.0\ref\TestDataPlugin.dll
 C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Release\net8.0-windows8.0\TestDataPlugin.Properties.Resources.resources
 C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Release\net8.0-windows8.0\TestDataPlugin.csproj.GenerateResource.cache
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Release\net8.0-windows8.0\TestDataPlugin.sourcelink.json
