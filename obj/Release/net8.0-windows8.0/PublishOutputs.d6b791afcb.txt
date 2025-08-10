@@ -1,0 +1,3 @@
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\bin\Release\net8.0-windows8.0\publish\TestDataPlugin.dll
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\bin\Release\net8.0-windows8.0\publish\TestDataPlugin.deps.json
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\bin\Release\net8.0-windows8.0\publish\TestDataPlugin.pdb
