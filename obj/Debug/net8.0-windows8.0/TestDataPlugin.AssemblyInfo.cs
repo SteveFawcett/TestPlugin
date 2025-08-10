@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TestDataPlugin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ef76cebae5cc0322851639f6f4d0c05fb1eb4b9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ef2813d1e34723105262e66ad7a0350163ee05e")]
 [assembly: System.Reflection.AssemblyProductAttribute("TestDataPlugin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TestDataPlugin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
