@@ -31,9 +31,9 @@ namespace TestDataPlugin
     }
     class Test : BroadcastPlugin , IProvider
     {
-        private List<DataSet> dataSets = new List<DataSet>()
-                 { new DataSet() { key = "AIRCRAFT_ALTITUDE" }
-        };
+        private List<DataSet> dataSets = new List<DataSet>();
+
+        public override string Stanza => "TEST";
 
         private static Timer? myTimer;
 
@@ -52,6 +52,26 @@ namespace TestDataPlugin
         public override void Start()
         {
             myTimer.Enabled = true; // Starts the timer
+            Logger.Log(Name, $"Plugin initialized");
+
+            foreach (var config in Configuration.GetChildren())
+            {
+                if (config.Key == "TestData")
+                {
+                    foreach (var dataSet in config.GetChildren())
+                    {
+                        DataSet ds = new DataSet
+                        {
+                            key = dataSet["variable"],
+                            // maximum = int.Parse(dataSet.Get("maximum", "1000")),
+                            // minimum = int.Parse(dataSet.Get("minimum", "0")),
+                            //  increment = int.Parse(dataSet.Get("increment", "100"))
+                        };
+                        dataSets.Add(ds);
+                    }
+                }
+            }
+
         }
 
         private void OnTimedEvent(object? sender, System.Timers.ElapsedEventArgs e)
