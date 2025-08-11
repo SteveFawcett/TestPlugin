@@ -84,11 +84,13 @@ jobs:
           
       # Download the NuGet package creeted in the previous job
     - name: Download package
+      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
       uses: actions/download-artifact@v5
       with:
           name: TestDataPlugin
 
     - name: Create GitHub Release
+      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
       id:   create_release
       uses: actions/create-release@v1
       env:
@@ -100,6 +102,7 @@ jobs:
             prerelease: true
 
     - name: Upload ZIP to Release
+      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
       uses: actions/upload-release-asset@v1
       env:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
