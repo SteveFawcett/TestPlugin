@@ -59,6 +59,12 @@ jobs:
     - name: Restore NuGet packages
       run: dotnet restore 
 
+    - name: Package into ZIP
+      run: dotnet msbuild -t:Package `
+        -p:Configuration=${{ matrix.configuration }} `
+        -p:OutputDirectory="${{ env.OutputDirectory }}" `
+        -p:Version="${{ env.Version }}"
+
     - name: Upload package
       uses: actions/upload-artifact@v4
       with:
@@ -67,11 +73,4 @@ jobs:
           retention-days: 7
           path: ${{ env.OutputDirectory }}/TestDataPlugin-v${{ env.SafeVersion }}.zip
 
-    - name: Upload package
-      uses: actions/upload-artifact@v4
-      with:
-          name: zippy-${{ env.Version }}
-          if-no-files-found: error
-          retention-days: 7
-          path: ${{ env.OutputDirectory }}/*.zip
 
