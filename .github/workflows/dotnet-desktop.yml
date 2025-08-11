@@ -9,6 +9,9 @@ on:
     types:
       - published    # Run the workflow when a new GitHub release is published
 
+permissions:
+  contents: write
+
 defaults:
   run:
     shell: pwsh
