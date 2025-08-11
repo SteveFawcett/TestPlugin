@@ -30,9 +30,6 @@ jobs:
         configuration: [ Release]
 
     runs-on: windows-latest 
-
-    env:
-      Solution_Name: ${{env.PluginName}}.csproj
       
     steps:
     - name: Checkout
@@ -63,7 +60,6 @@ jobs:
               $version = Get-Date -Format "yyyy.MM.dd-HHmmss"
           }
           echo "Version=$version" >> $env:GITHUB_ENV
-
 
     - name: Restore NuGet packages
       run: dotnet restore 
