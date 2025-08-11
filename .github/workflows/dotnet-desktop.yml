@@ -45,23 +45,27 @@ jobs:
 
     - name: Normalize version
       run: |
-        $raw = "${{ github.ref_name }}"
-        if ($raw -match '^v\d+\.\d+\.\d+') {
-          $version = $raw -replace '^v'
-        } else {
-          $shortSha = "${{ github.sha }}".Substring(0, 8)
-          $version = "0.0.0-$raw+$shortSha"
-        }
-        echo "Version=$version" >> $env:GITHUB_ENV
+           $raw = "${{ github.ref_name }}"
+           if ($raw -match '^v\d+\.\d+\.\d+') {
+                $version = $raw -replace '^v'
+           } else {
+                $shortSha = "${{ github.sha }}".Substring(0, 8)
+                $version = "0.0.0-$raw+$shortSha"
+           }
+           $safeVersion = $version -replace '[^a-zA-Z0-9\.\-_]', '_'
+           echo "Version=$version" >> $env:GITHUB_ENV
+           echo "SafeVersion=$safeVersion" >> $env:GITHUB_ENV
 
     - name: Restore NuGet packages
       run: dotnet restore 
 
-    - name: Package into ZIP
-      run: dotnet msbuild -t:Package `
-           -p:Configuration=${{ matrix.configuration }} `
-           -p:OutputDirectory="${{ env.OutputDirectory }}" `
-           -p:Version="${{ env.Version }}"
+    - name: Upload package
+      uses: actions/upload-artifact@v4
+      with:
+          name: zippy-${{ env.SafeVersion }}
+          if-no-files-found: error
+          retention-days: 7
+          path: ${{ env.OutputDirectory }}/TestDataPlugin-v${{ env.SafeVersion }}.zip
 
     - name: Upload package
       uses: actions/upload-artifact@v4
