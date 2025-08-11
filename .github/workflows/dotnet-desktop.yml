@@ -42,7 +42,6 @@ jobs:
     - name: Package into ZIP
       run: dotnet msbuild -t:Package -p:Configuration=${{ matrix.configuration }} -p:OutputDirectory=${{OutputDirectory}}
 
-
     - name: Upload package
       uses: actions/upload-artifact@v4
       with:
