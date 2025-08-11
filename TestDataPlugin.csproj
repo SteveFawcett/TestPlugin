@@ -6,7 +6,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <PackageDir Condition="'$(PackageDir)' == ''">$([System.IO.Path]::Combine($(OutputPath),'package'))/</PackageDir>
-	  <PackagePath> c:\plugins\$(AssemblyName).zip</PackagePath>
+	  <OutputDirectory>.</OutputDirectory>
+	  <PackagePath> $(OutputDirectory)\$(AssemblyName).zip</PackagePath>
 	  <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
@@ -17,6 +18,9 @@
   <Target Name="PackageClean" AfterTargets="Clean">
 	  <Delete Files="$(PackagePath)" />
   </Target>
+  <ItemGroup>
+    <None Remove="TestDataPlugin.zip" />
+  </ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Resources\" />

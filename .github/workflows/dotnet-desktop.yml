@@ -39,11 +39,9 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    - name: Execute Build
-      run: dotnet build
-
     - name: Package into ZIP
-      run: dotnet publish --target:Package --configuration ${{ matrix.configuration }} --output $(env.OutputDirectory)
+      run: dotnet msbuild -t:Package -p:Configuration=${{ matrix.configuration }} -p:OutputDirectory=${{OutputDirectory}}
+
 
     - name: Upload package
       uses: actions/upload-artifact@v4
@@ -51,5 +49,5 @@ jobs:
         name: zippy
         if-no-files-found: error
         retention-days: 7
-        path: ${{ env.OutputDirectory }}/*.zip
+        path: ${{ OutputDirectory }}/*.zip
 
