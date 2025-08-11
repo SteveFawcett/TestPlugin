@@ -49,16 +49,11 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+
     - name: Get version from tag
       id: get_version
       if: github.event_name == 'release'
       uses: jannemattila/get-version-from-tag@v4
-
-    - name: Restore NuGet packages
-      run: dotnet restore 
-
-    - name: Ensure artifacts folder exists
-      run: mkdir -Force "${{ env.OutputDirectory }}"
 
     - name: Resolve Version
       run: |
@@ -67,13 +62,19 @@ jobs:
         } else {
           $version = Get-Date -Format "yyyy.MM.dd-HHmmss"
         }
-        Write-Host "VERSION=$version" >> $env:GITHUB_ENV
+        Write-Host "Version=$version" >> $env:GITHUB_ENV
+
+    - name: Restore NuGet packages
+      run: dotnet restore 
+
+    - name: Ensure artifacts folder exists
+      run: mkdir -Force "${{ env.OutputDirectory }}"
 
     - name: Package into ZIP
       run: dotnet msbuild -t:Package `
         -p:Configuration=${{ matrix.configuration }} `
         -p:OutputDirectory="${{ env.OutputDirectory }}" `
-        -p:Version="${{ env.VERSION }}"
+        -p:Version="${{ env.Version }}"
 
     - name: Upload package
       uses: actions/upload-artifact@v4
@@ -81,7 +82,7 @@ jobs:
           name: TestDataPlugin
           if-no-files-found: error
           retention-days: 7
-          path: ${{ env.OutputDirectory }}/TestDataPlugin-v${{ env.VERSION }}.zip
+          path: ${{ env.OutputDirectory }}/TestDataPlugin-v${{ env.Version }}.zip
           
       # Download the NuGet package creeted in the previous job
     - name: Download package
@@ -97,8 +98,8 @@ jobs:
       env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-            tag_name: ${{ env.VERSION }}
-            release_name: Release ${{ env.VERSION }}
+            tag_name: ${{ env.Version }}
+            release_name: Release ${{ env.Version }}
             draft: false
             prerelease: true
 
@@ -109,6 +110,6 @@ jobs:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: D:\a\TestPlugin\TestPlugin\artifacts\TestDataPlugin-v${{ env.VERSION }}.zip
-            asset_name: TestDataPlugin-v${{ env.VERSION }}.zip
+            asset_path: D:\a\TestPlugin\TestPlugin\artifacts\TestDataPlugin-v${{ env.Version }}.zip
+            asset_name: TestDataPlugin-v${{ env.Version }}.zip
             asset_content_type: application/zip

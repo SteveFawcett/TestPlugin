@@ -7,7 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
 	  <PackageDir Condition="'$(PackageDir)' == ''">$([System.IO.Path]::Combine($(OutputPath),'package'))/</PackageDir>
 	  <OutputDirectory>.</OutputDirectory>
-	  <PackageFileName>$(AssemblyName)-v$(SafeVersion).zip</PackageFileName>
+	  <Version>$(Version)</Version>
+	  <PackageFileName>$(AssemblyName)-v$(Version).zip</PackageFileName>
 	  <PackagePath>$(OutputDirectory)\$(PackageFileName)</PackagePath>
 	  <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
   </PropertyGroup>
