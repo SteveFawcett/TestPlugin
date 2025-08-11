@@ -49,24 +49,25 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    - name: Normalize version
-      run: |
-           $raw = "${{ github.ref_name }}"
-           if ($raw -match '^v\d+\.\d+\.\d+') {
-                $version = $raw -replace '^v'
-           } else {
-                $shortSha = "${{ github.sha }}".Substring(0, 8)
-                $version = "0.0.0-$raw+$shortSha"
-           }
-           $safeVersion = $version -replace '[^a-zA-Z0-9\.\-_]', '_'
-           echo "Version=$version" >> $env:GITHUB_ENV
-           echo "SafeVersion=$safeVersion" >> $env:GITHUB_ENV
+    - name: Get version from tag
+      id: get_version
+      if: github.event_name == 'release'
+      uses: jannemattila/get-version-from-tag@v4
 
     - name: Restore NuGet packages
       run: dotnet restore 
 
     - name: Ensure artifacts folder exists
       run: mkdir -Force "${{ env.OutputDirectory }}"
+
+    - name: Resolve Version
+      run: |
+        if (${{ github.event_name }} -eq 'release') {
+          $version = '${{ steps.get_version.outputs.version }}'
+        } else {
+          $version = Get-Date -Format "yyyy.MM.dd-HHmmss"
+        }
+        Write-Host "Version=$version" >> $env:GITHUB_ENV
 
     - name: Package into ZIP
       run: dotnet msbuild -t:Package `
@@ -80,7 +81,7 @@ jobs:
           name: TestDataPlugin
           if-no-files-found: error
           retention-days: 7
-          path: ${{ env.OutputDirectory }}/TestDataPlugin-v${{ env.SafeVersion }}.zip
+          path: ${{ env.OutputDirectory }}/TestDataPlugin-v${{ env.Version }}.zip
           
       # Download the NuGet package creeted in the previous job
     - name: Download package
@@ -96,8 +97,8 @@ jobs:
       env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-            tag_name: ${{ env.SafeVersion }}
-            release_name: Release ${{ env.SafeVersion }}
+            tag_name: ${{ env.Version }}
+            release_name: Release ${{ env.Version }}
             draft: false
             prerelease: true
 
@@ -108,6 +109,6 @@ jobs:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: D:\a\TestPlugin\TestPlugin\artifacts\TestDataPlugin-v${{ env.SafeVersion }}.zip
-            asset_name: TestDataPlugin-v${{ env.SafeVersion }}.zip
+            asset_path: D:\a\TestPlugin\TestPlugin\artifacts\TestDataPlugin-v${{ env.Version }}.zip
+            asset_name: TestDataPlugin-v${{ env.Version }}.zip
             asset_content_type: application/zip
