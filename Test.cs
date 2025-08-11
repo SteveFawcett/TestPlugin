@@ -34,18 +34,18 @@ namespace TestDataPlugin
 
         public override string Stanza => "TEST";
 
-        private static Timer? myTimer;
+        private static Timer myTimer = new Timer(1000)
+        {
+            Enabled = false,
+            AutoReset = true
+        }
 
         public Test() : base()
         {
             Name = "Local Test";
             Icon = Properties.Resources.green;
             Description = "Test Data Provider";
-
-            myTimer = new Timer(1000); // 1 second interval
             myTimer.Elapsed += OnTimedEvent;
-            myTimer.AutoReset = true;
-            myTimer.Enabled = false; 
         }
 
         public override void Start()
