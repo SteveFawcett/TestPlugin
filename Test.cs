@@ -38,7 +38,7 @@ namespace TestDataPlugin
         {
             Enabled = false,
             AutoReset = true
-        }
+        };
 
         public Test() : base()
         {
