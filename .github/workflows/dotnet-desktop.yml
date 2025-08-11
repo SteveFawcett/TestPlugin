@@ -43,11 +43,13 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+    - name: Restore NuGet packages
+      run: dotnet restore 
+
     - name: Normalize version
       run: |
           $version = "${{ github.ref_name }}" -replace '^v'
           echo "Version=$version" >> $env:GITHUB_ENV
-
 
     - name: Package into ZIP
       run: dotnet msbuild -t:Package `
