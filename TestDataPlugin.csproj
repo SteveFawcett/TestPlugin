@@ -6,7 +6,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <PackageDir Condition="'$(PackageDir)' == ''">$([System.IO.Path]::Combine($(OutputPath),'package'))/</PackageDir>
-	  <PackagePath> c:\plugins\TESTDATA.zip</PackagePath>
+	  <PackagePath> c:\plugins\$(AssemblyName).zip</PackagePath>
 	  <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
@@ -20,6 +20,10 @@
 
 	<ItemGroup>
 	  <Folder Include="Resources\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include=".github\workflows\dotnet-desktop.yml" />
 	</ItemGroup>
 
 	<ItemGroup>
