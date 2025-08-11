@@ -90,27 +90,15 @@ jobs:
       if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
       uses: actions/download-artifact@v5
       with:
-          name: TestDataPlugin
+        name: TestDataPlugin
+        path: ./artifacts
 
-    - name: Create GitHub Release
+    - name: Upload Artifact via GitHub CLI
       if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-      id:   create_release
-      uses: actions/create-release@v1
+      run: |
+        gh release upload ${{ github.event.release.tag_name }} ./artifacts/TestDataPlugin-v${{ github.event.release.tag_name }}.zip --clobber
       env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-            tag_name: ${{ env.Version }}
-            release_name: Release ${{ env.Version }}
-            draft: false
-            prerelease: true
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload ZIP to Release
-      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-      uses: actions/upload-release-asset@v1
-      env:
-             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: D:\a\TestPlugin\TestPlugin\artifacts\TestDataPlugin-v${{ env.Version }}.zip
-            asset_name: TestDataPlugin-v${{ env.Version }}.zip
-            asset_content_type: application/zip
+ 
+      
