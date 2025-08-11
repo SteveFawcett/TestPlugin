@@ -1,0 +1,8 @@
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.csproj.AssemblyReference.cache
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.Properties.Resources.resources
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.csproj.GenerateResource.cache
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.AssemblyInfoInputs.cache
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.AssemblyInfo.cs
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.csproj.CoreCompileInputs.cache
+C:\Users\steve\source\repos\sfawcett123\TestDataPlugin\obj\Debug\net8.0-windows8.0\TestDataPlugin.sourcelink.json
