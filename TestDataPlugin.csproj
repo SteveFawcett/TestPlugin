@@ -1,16 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-	  <PackageDir Condition="'$(PackageDir)' == ''">$([System.IO.Path]::Combine($(OutputPath),'package'))/</PackageDir>
-	  <OutputDirectory>.</OutputDirectory>
-	  <Version>$(Version)</Version>
-	  <PackageFileName>$(AssemblyName)-v$(Version).zip</PackageFileName>
-	  <PackagePath>$(OutputDirectory)\$(PackageFileName)</PackagePath>
-	  <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
+		<TargetFramework>net8.0-windows8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PackageDir Condition="'$(PackageDir)' == ''">$([System.IO.Path]::Combine($(OutputPath),'package'))/</PackageDir>
+		<OutputDirectory>.</OutputDirectory>
+		<Version>$(Version)</Version>
+		<PackageFileName>$(AssemblyName)-v$(Version).zip</PackageFileName>
+		<PackagePath>$(OutputDirectory)\$(PackageFileName)</PackagePath>
+		<SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<Copyright>Copyright © 2025 Steven Fawcett, All Rights Reserved</Copyright>
+		<PackageTags>simulator;broadcast</PackageTags>
   </PropertyGroup>
 
   <Target Name="Package" DependsOnTargets="Publish">
