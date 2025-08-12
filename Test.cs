@@ -28,13 +28,13 @@ namespace TestDataPlugin
             }
         }
     }
-    class Test : BroadcastPlugin , IProvider
+    internal class Test : BroadcastPlugin, IProvider
     {
-        private List<DataSet> dataSets = new List<DataSet>();
+        private readonly List<DataSet> dataSets = [];
 
         public override string Stanza => "TEST";
 
-        private static Timer myTimer = new Timer(1000)
+        private static readonly Timer myTimer = new(1000)
         {
             Enabled = false,
             AutoReset = true
@@ -53,20 +53,29 @@ namespace TestDataPlugin
             myTimer.Enabled = true; // Starts the timer
             Logger.Log(Name, $"Plugin initialized");
 
-            foreach (var config in Configuration.GetChildren())
+            if (Configuration == null)
+            {
+                Logger.Log(Name, "Configuration is null");
+                return;
+            }
+
+            foreach (Microsoft.Extensions.Configuration.IConfigurationSection config in Configuration.GetChildren())
             {
                 if (config.Key == "TestData")
                 {
-                    foreach (var dataSet in config.GetChildren())
+                    foreach (Microsoft.Extensions.Configuration.IConfigurationSection dataSet in config.GetChildren())
                     {
-                        DataSet ds = new DataSet
+                        if (!string.IsNullOrEmpty(dataSet["variable"]))
                         {
-                            key = dataSet["variable"],
-                            // maximum = int.Parse(dataSet.Get("maximum", "1000")),
-                            // minimum = int.Parse(dataSet.Get("minimum", "0")),
-                            //  increment = int.Parse(dataSet.Get("increment", "100"))
-                        };
-                        dataSets.Add(ds);
+                            DataSet ds = new()
+                            {
+                                key = dataSet["variable"] ?? "Dummy",
+                                maximum = int.Parse(dataSet["maximum"] ?? "1000"),
+                                minimum = int.Parse(dataSet["minimum"] ?? "0"),
+                                increment = int.Parse(dataSet["increment"] ?? "100")
+                            };
+                            dataSets.Add(ds);
+                        }
                     }
                 }
             }
@@ -75,12 +84,12 @@ namespace TestDataPlugin
 
         private void OnTimedEvent(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            PluginData send = new();
+            PluginData send = [];
             Debug.WriteLine($"Sending test data from {Name} plugin");
             foreach (DataSet dataSet in dataSets)
             {
                 dataSet.increase();
-                send.Add( dataSet.key , dataSet.value.ToString());
+                send.Add(dataSet.key, dataSet.value.ToString());
             }
             DataReceived?.Invoke(this, send);
         }
