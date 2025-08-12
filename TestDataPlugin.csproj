@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\BroadcastPluginSDK\BroadcastPluginSDK.csproj" />
+	  <PackageReference Include="BroadcastPluginSDK" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
