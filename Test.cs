@@ -1,5 +1,6 @@
 ﻿using BroadcastPluginSDK;
 using System.Diagnostics;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 namespace TestDataPlugin
@@ -12,7 +13,7 @@ namespace TestDataPlugin
         public int minimum = 0;
         public int increment = 100;
 
-        public void increase()
+        public void Increase()
         {
             value += increment;
             if (value > maximum)
@@ -31,8 +32,7 @@ namespace TestDataPlugin
     internal class Test : BroadcastPlugin, IProvider
     {
         private readonly List<DataSet> dataSets = [];
-
-        public override string Stanza => "TEST";
+        public override string Stanza => "Test";
 
         private static readonly Timer myTimer = new(1000)
         {
@@ -48,7 +48,7 @@ namespace TestDataPlugin
             myTimer.Elapsed += OnTimedEvent;
         }
 
-        public override void Start()
+        public override string Start()
         {
             myTimer.Enabled = true; // Starts the timer
             Logger.Log(Name, $"Plugin initialized");
@@ -56,7 +56,7 @@ namespace TestDataPlugin
             if (Configuration == null)
             {
                 Logger.Log(Name, "Configuration is null");
-                return;
+                return String.Empty;
             }
 
             foreach (Microsoft.Extensions.Configuration.IConfigurationSection config in Configuration.GetChildren())
@@ -79,7 +79,7 @@ namespace TestDataPlugin
                     }
                 }
             }
-
+            return String.Empty;
         }
 
         private void OnTimedEvent(object? sender, System.Timers.ElapsedEventArgs e)
@@ -88,9 +88,10 @@ namespace TestDataPlugin
             Debug.WriteLine($"Sending test data from {Name} plugin");
             foreach (DataSet dataSet in dataSets)
             {
-                dataSet.increase();
+                dataSet.Increase();
                 send.Add(dataSet.key, dataSet.value.ToString());
             }
+
             DataReceived?.Invoke(this, send);
         }
 
