@@ -1,6 +1,7 @@
 ﻿using BroadcastPluginSDK;
 using System.Diagnostics;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Timer = System.Timers.Timer;
 
 namespace TestDataPlugin
@@ -29,7 +30,7 @@ namespace TestDataPlugin
             }
         }
     }
-    internal class Test : BroadcastPlugin, IProvider
+    internal class Test : BroadcastPluginBase, IProvider
     {
         private readonly List<DataSet> dataSets = [];
         public override string Stanza => "Test";
@@ -56,7 +57,7 @@ namespace TestDataPlugin
             if (Configuration == null)
             {
                 Logger.Log(Name, "Configuration is null");
-                return String.Empty;
+                return string.Empty;
             }
 
             foreach (Microsoft.Extensions.Configuration.IConfigurationSection config in Configuration.GetChildren())
@@ -79,13 +80,13 @@ namespace TestDataPlugin
                     }
                 }
             }
-            return String.Empty;
+            return string.Empty;
         }
 
         private void OnTimedEvent(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            PluginData send = [];
-            Debug.WriteLine($"Sending test data from {Name} plugin");
+            Dictionary<string, string> send = [];
+            Debug.WriteLine($"Timed Event: Sending test data from {Name} plugin");
             foreach (DataSet dataSet in dataSets)
             {
                 dataSet.Increase();
@@ -95,7 +96,7 @@ namespace TestDataPlugin
             DataReceived?.Invoke(this, send);
         }
 
-        public event EventHandler<PluginData>? DataReceived;
+        public event EventHandler<Dictionary<string, string>>? DataReceived;
     }
 }
 
