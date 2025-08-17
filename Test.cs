@@ -1,6 +1,8 @@
 ﻿using BroadcastPluginSDK;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
+using Microsoft.Extensions.Configuration;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Timer = System.Timers.Timer;
 
@@ -33,7 +35,7 @@ namespace TestDataPlugin
     internal class Test : BroadcastPluginBase, IProvider
     {
         private readonly List<DataSet> dataSets = [];
-        public override string Stanza => "Test";
+        private static readonly Image s_icon = Properties.Resources.green;
 
         private static readonly Timer myTimer = new(1000)
         {
@@ -41,11 +43,8 @@ namespace TestDataPlugin
             AutoReset = true
         };
 
-        public Test() : base()
+        public Test() : base(null, null, s_icon, "Local Test", "Test", "Test Data Provider")
         {
-            Name = "Local Test";
-            Icon = Properties.Resources.green;
-            Description = "Test Data Provider";
             myTimer.Elapsed += OnTimedEvent;
         }
 
