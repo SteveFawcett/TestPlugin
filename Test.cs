@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using System.Timers;
-using BroadcastPluginSDK.abstracts;
+﻿using BroadcastPluginSDK.abstracts;
 using BroadcastPluginSDK.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Timers;
 using TestDataPlugin.Properties;
 using Timer = System.Timers.Timer;
 
@@ -44,14 +44,15 @@ internal class Test : BroadcastPluginBase, IProvider
     };
 
     private readonly List<DataSet> dataSets = [];
+    private readonly ILogger _logger;
 
-    public Test(IConfiguration configuration) :
+    public Test(IConfiguration configuration , ILogger logger) :
         base(configuration, null, s_icon, "Local Test", "Test", "Test Data Provider")
     {
-        Debug.WriteLine("Starting Test Plugin");
+        _logger = logger;
+        _logger.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
         myTimer.Enabled = true; // Starts the timer
-        Debug.WriteLine("Timer Started");
 
         foreach (var config in configuration.GetSection("Test").GetChildren())
             if (config.Key == "TestData")
