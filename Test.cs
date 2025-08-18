@@ -10,25 +10,25 @@ namespace TestDataPlugin
 {
     internal class DataSet
     {
-        public string key = string.Empty;
-        public int value = 0;
-        public int maximum = 1000;
-        public int minimum = 0;
-        public int increment = 100;
+        public string Key = string.Empty;
+        public int Value = 0;
+        public int Maximum = 1000;
+        public int Minimum = 0;
+        public int Increment = 100;
 
         public void Increase()
         {
-            value += increment;
-            if (value > maximum)
+            Value += Increment;
+            if (Value > Maximum)
             {
-                value = maximum;
-                increment = -increment;
+                Value = Maximum;
+                Increment = -Increment;
             }
 
-            if (value < minimum)
+            if (Value < Minimum)
             {
-                value = minimum;
-                increment = -increment;
+                Value = Minimum;
+                Increment = -Increment;
             }
         }
     }
@@ -43,53 +43,43 @@ namespace TestDataPlugin
             AutoReset = true
         };
 
-        public Test() : base(null, null, s_icon, "Local Test", "Test", "Test Data Provider")
+        public Test(IConfiguration configuration) : 
+            base(configuration, null, s_icon, "Local Test", "Test", "Test Data Provider")
         {
+            Debug.WriteLine("Starting Test Plugin");
             myTimer.Elapsed += OnTimedEvent;
-        }
-
-        public override string Start()
-        {
             myTimer.Enabled = true; // Starts the timer
-            Logger.Log(Name, $"Plugin initialized");
+            Debug.WriteLine("Timer Started");
 
-            if (Configuration == null)
-            {
-                Logger.Log(Name, "Configuration is null");
-                return string.Empty;
-            }
-
-            foreach (Microsoft.Extensions.Configuration.IConfigurationSection config in Configuration.GetChildren())
+            foreach (IConfigurationSection config in configuration.GetSection( "Test").GetChildren())
             {
                 if (config.Key == "TestData")
                 {
-                    foreach (Microsoft.Extensions.Configuration.IConfigurationSection dataSet in config.GetChildren())
+                    foreach (IConfigurationSection dataSet in config.GetChildren())
                     {
                         if (!string.IsNullOrEmpty(dataSet["variable"]))
                         {
                             DataSet ds = new()
                             {
-                                key = dataSet["variable"] ?? "Dummy",
-                                maximum = int.Parse(dataSet["maximum"] ?? "1000"),
-                                minimum = int.Parse(dataSet["minimum"] ?? "0"),
-                                increment = int.Parse(dataSet["increment"] ?? "100")
+                                Key = dataSet["variable"] ?? "Dummy",
+                                Maximum = int.Parse(dataSet["Maximum"] ?? "1000"),
+                                Minimum = int.Parse(dataSet["Minimum"] ?? "0"),
+                                Increment = int.Parse(dataSet["Increment"] ?? "100")
                             };
                             dataSets.Add(ds);
                         }
                     }
                 }
             }
-            return string.Empty;
         }
 
         private void OnTimedEvent(object? sender, System.Timers.ElapsedEventArgs e)
         {
             Dictionary<string, string> send = [];
-            Debug.WriteLine($"Timed Event: Sending test data from {Name} plugin");
             foreach (DataSet dataSet in dataSets)
             {
                 dataSet.Increase();
-                send.Add(dataSet.key, dataSet.value.ToString());
+                send.Add(dataSet.Key, dataSet.Value.ToString());
             }
 
             DataReceived?.Invoke(this, send);
