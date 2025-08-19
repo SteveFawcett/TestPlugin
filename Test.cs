@@ -44,9 +44,9 @@ internal class Test : BroadcastPluginBase, IProvider
     };
 
     private readonly List<DataSet> dataSets = [];
-    private readonly ILogger _logger;
+    private readonly ILogger<IPlugin> _logger;
 
-    public Test(IConfiguration configuration , ILogger logger) :
+    public Test(IConfiguration configuration , ILogger<IPlugin> logger) :
         base(configuration, null, s_icon, "Local Test", "Test", "Test Data Provider")
     {
         _logger = logger;
@@ -78,6 +78,7 @@ internal class Test : BroadcastPluginBase, IProvider
         foreach (var dataSet in dataSets)
         {
             dataSet.Increase();
+            _logger.LogDebug( $"Sending Message {dataSet.Key} => {dataSet.Value.ToString()}");
             send.Add(dataSet.Key, dataSet.Value.ToString());
         }
 
