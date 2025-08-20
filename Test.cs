@@ -3,10 +3,10 @@ using BroadcastPluginSDK.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Timers;
-using TestDataPlugin.Properties;
+using TestPlugin.Properties;
 using Timer = System.Timers.Timer;
 
-namespace TestDataPlugin;
+namespace TestPlugin;
 
 internal class DataSet
 {
@@ -47,7 +47,7 @@ internal class Test : BroadcastPluginBase, IProvider
     private readonly ILogger<IPlugin> _logger;
 
     public Test(IConfiguration configuration , ILogger<IPlugin> logger) :
-        base(configuration, null, s_icon, "Local Test", "Test", "Test Data Provider")
+        base(configuration, null, s_icon, "Test")
     {
         _logger = logger;
         _logger.LogInformation("Starting Test Plugin");
