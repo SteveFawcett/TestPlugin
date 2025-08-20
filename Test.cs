@@ -65,7 +65,7 @@ internal class Test : BroadcastPluginBase, IProvider
                             Maximum = int.Parse(dataSet["maximum"] ?? "1000"),
                             Maximum = int.Parse(dataSet["maximum"] ?? "1000"),
                             Minimum = int.Parse(dataSet["minimum"] ?? "0"),
-                            Increment = int.Parse(dataSet["Increment"] ?? "100")
+                            Increment = int.Parse(dataSet["increment"] ?? "100")
                         };
                         dataSets.Add(ds);
                     }
