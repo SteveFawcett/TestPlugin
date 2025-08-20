@@ -62,7 +62,7 @@ internal class Test : BroadcastPluginBase, IProvider
                         DataSet ds = new()
                         {
                             Key = dataSet["variable"] ?? "Dummy",
-                            Maximum = int.Parse(dataSet["Maximum"] ?? "1000"),
+                            Maximum = int.Parse(dataSet["maximum"] ?? "1000"),
                             Minimum = int.Parse(dataSet["Minimum"] ?? "0"),
                             Increment = int.Parse(dataSet["Increment"] ?? "100")
                         };
