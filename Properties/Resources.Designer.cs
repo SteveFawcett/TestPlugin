@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TestDataPlugin.Properties {
+namespace TestPlugin.Properties {
     using System;
     
     
