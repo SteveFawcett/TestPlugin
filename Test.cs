@@ -46,6 +46,8 @@ internal class Test : BroadcastPluginBase, IProvider
     private readonly List<DataSet> dataSets = [];
     private readonly ILogger<IPlugin> _logger;
 
+    public Test() : base() { }
+
     public Test(IConfiguration configuration , ILogger<IPlugin> logger) :
         base(configuration, null, s_icon, "Test")
     {
