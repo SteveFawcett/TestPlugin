@@ -1,19 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-		<TargetFramework>net8.0-windows8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<UseWindowsForms>true</UseWindowsForms>
-		<ImplicitUsings>enable</ImplicitUsings>
-	    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+	  <TargetFramework>net8.0-windows8.0</TargetFramework>
+	  <Nullable>enable</Nullable>
+	  <UseWindowsForms>true</UseWindowsForms>
+
+	  <PlatformTarget>x64</PlatformTarget>
+	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	  <Prefer32Bit>false</Prefer32Bit>
+
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+	  <Platforms>x64</Platforms>
 
 	  <OutputDirectory>$(AppData)\Broadcast\Plugins\</OutputDirectory>
 	  <PackageDir Condition="'$(PackageDir)' == ''">$([System.IO.Path]::Combine($(OutputDirectory),''))/</PackageDir>
 	  <PackageFileName>$(AssemblyName)-v$(AssemblyVersion).zip</PackageFileName>
 	  <PackagePath>$(PackageDir)\$(PackageFileName)</PackagePath>
+	  <RemotePath>Z:\Plugins</RemotePath>
 	  
 	    <AssemblyVersion>0.0.1</AssemblyVersion>
-		<SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<Copyright>Copyright © 2025 Steven Fawcett, All Rights Reserved</Copyright>
@@ -82,5 +88,10 @@
 	    <PackagePath>\</PackagePath>
 	  </None>
 	</ItemGroup>
+
+	<Target Name="Deliver" AfterTargets="Publish">
+		<Message Importance="High" Text="📦 Copying to remote [$(RemotePath)] " />
+		<Copy SourceFiles="$(PackagePath)" DestinationFolder="$(RemotePath)" />
+	</Target>
 
 </Project>
