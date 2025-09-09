@@ -1,4 +1,5 @@
 ﻿using BroadcastPluginSDK.abstracts;
+using BroadcastPluginSDK.Classes;
 using BroadcastPluginSDK.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -44,14 +45,16 @@ internal class Test : BroadcastPluginBase, IProvider
     };
 
     private readonly List<DataSet> dataSets = [];
-    private readonly ILogger<IPlugin> _logger;
+    private readonly ILogger<IPlugin>? _logger;
+    private readonly IPluginRegistry? _pluginRegistry;
 
     public Test() : base() { }
 
-    public Test(IConfiguration configuration , ILogger<IPlugin> logger) :
+    public Test(IConfiguration configuration , ILogger<IPlugin> logger , IPluginRegistry pluginRegistry) :
         base(configuration, null, s_icon, "Test")
     {
         _logger = logger;
+        _pluginRegistry = pluginRegistry;
         _logger.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
         myTimer.Enabled = true; // Starts the timer
@@ -70,6 +73,8 @@ internal class Test : BroadcastPluginBase, IProvider
                         };
                         dataSets.Add(ds);
                     }
+
+        _pluginRegistry = pluginRegistry;
     }
 
     public event EventHandler<Dictionary<string, string>>? DataReceived;
@@ -80,10 +85,42 @@ internal class Test : BroadcastPluginBase, IProvider
         foreach (var dataSet in dataSets)
         {
             dataSet.Increase();
-            _logger.LogDebug( $"Sending Message {dataSet.Key} => {dataSet.Value.ToString()}");
+            _logger?.LogDebug( $"Sending Message {dataSet.Key} => {dataSet.Value.ToString()}");
             send.Add(dataSet.Key, dataSet.Value.ToString());
         }
+        DummyCommand();
 
         DataReceived?.Invoke(this, send);
+ 
+    }
+
+    void DummyCommand()
+    {
+        if(_pluginRegistry == null) return;
+
+        ICache? cache = _pluginRegistry.MasterCache();
+        _logger?.LogDebug("Found Cache: {cache}", cache != null ? "Yes" : "No");
+
+        if( cache == null) return;
+
+        _logger?.LogDebug("Getting Commands");
+        var commands = cache.CommandReader(CommandStatus.New);
+        _logger?.LogDebug("Found Commands: {count}", commands != null ? commands.Count.ToString() : "0");
+
+        if (commands != null)
+            foreach (var command in commands)
+                _logger?.LogDebug("Command: {command} Status: {status}", command.CommandText, command.Status.ToString());
+        
+        if(commands == null || commands.Count > 0) return;
+
+        cache?.CommandWriter(
+            new CommandItem()
+            {
+                CommandText = "Dummy",
+                Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
+                Status = CommandStatus.New,
+            });
+
+        _logger?.LogDebug("Dummy Command Executed");
     }
 }
