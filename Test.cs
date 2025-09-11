@@ -36,6 +36,8 @@ internal class DataSet
 
 internal class Test : BroadcastPluginBase, IProvider
 {
+    private const string STANZA = "Test";
+
     private static readonly Image s_icon = Resources.green;
 
     private static readonly Timer myTimer = new(1000)
@@ -53,14 +55,16 @@ internal class Test : BroadcastPluginBase, IProvider
     private readonly List<DataSet> dataSets = [];
     private readonly ILogger<IPlugin>? _logger;
     private readonly IPluginRegistry? _pluginRegistry;
+    private readonly IConfiguration? _configuration;
 
     public Test() : base() { }
 
     public Test(IConfiguration configuration , ILogger<IPlugin> logger , IPluginRegistry pluginRegistry) :
-        base(configuration, null, s_icon, "Test")
+        base(configuration, null, s_icon, STANZA )
     {
         _logger = logger;
         _pluginRegistry = pluginRegistry;
+        _configuration = configuration.GetSection(STANZA) ;
         _logger.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
         myTimer.Enabled = true; // Starts the timer
@@ -110,16 +114,11 @@ internal class Test : BroadcastPluginBase, IProvider
 
         if( cache == null) return;
 
-        _logger?.LogDebug("Getting Commands");
-
-        foreach (var command in cache.CommandReader(CommandStatus.New))
-            _logger?.LogDebug("Command: {command} Status: {status}", command.Command.ToString(), command.Status.ToString());
-  
         _logger?.LogDebug("Adding Dummy Command");
         cache?.CommandWriter(
             new CommandItem()
             {
-                Command = Commands.START_FLIGHT_SIMULATOR,
+                Command = _configuration?.GetValue<string>("Command") ?? "Empty command",
                 Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
                 Status = CommandStatus.New,
             });
