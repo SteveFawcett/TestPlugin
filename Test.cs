@@ -44,6 +44,12 @@ internal class Test : BroadcastPluginBase, IProvider
         AutoReset = true
     };
 
+    private static readonly Timer TempTimer = new(10000)
+    {
+        Enabled = false,
+        AutoReset = true
+    };
+
     private readonly List<DataSet> dataSets = [];
     private readonly ILogger<IPlugin>? _logger;
     private readonly IPluginRegistry? _pluginRegistry;
@@ -58,6 +64,8 @@ internal class Test : BroadcastPluginBase, IProvider
         _logger.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
         myTimer.Enabled = true; // Starts the timer
+        TempTimer.Elapsed += OnTempTimedEvent;
+        TempTimer.Enabled = true; // Starts the timer
 
         foreach (var config in configuration.GetSection("Test").GetChildren())
             if (config.Key == "TestData")
@@ -88,13 +96,12 @@ internal class Test : BroadcastPluginBase, IProvider
             _logger?.LogDebug( $"Sending Message {dataSet.Key} => {dataSet.Value.ToString()}");
             send.Add(dataSet.Key, dataSet.Value.ToString());
         }
-        DummyCommand();
 
         DataReceived?.Invoke(this, send);
  
     }
 
-    void DummyCommand()
+    private void OnTempTimedEvent(object? sender, ElapsedEventArgs e)
     {
         if(_pluginRegistry == null) return;
 
@@ -104,19 +111,15 @@ internal class Test : BroadcastPluginBase, IProvider
         if( cache == null) return;
 
         _logger?.LogDebug("Getting Commands");
-        var commands = cache.CommandReader(CommandStatus.New);
-        _logger?.LogDebug("Found Commands: {count}", commands != null ? commands.Count.ToString() : "0");
 
-        if (commands != null)
-            foreach (var command in commands)
-                _logger?.LogDebug("Command: {command} Status: {status}", command.CommandText, command.Status.ToString());
-        
-        if(commands == null || commands.Count > 0) return;
-
+        foreach (var command in cache.CommandReader(CommandStatus.New))
+            _logger?.LogDebug("Command: {command} Status: {status}", command.Command.ToString(), command.Status.ToString());
+  
+        _logger?.LogDebug("Adding Dummy Command");
         cache?.CommandWriter(
             new CommandItem()
             {
-                CommandText = "Dummy",
+                Command = Commands.START_FLIGHT_SIMULATOR,
                 Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
                 Status = CommandStatus.New,
             });
