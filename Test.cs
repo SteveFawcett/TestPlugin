@@ -86,7 +86,6 @@ internal class Test : BroadcastPluginBase, IProvider
                         dataSets.Add(ds);
                     }
 
-        _pluginRegistry = pluginRegistry;
     }
 
     public event EventHandler<Dictionary<string, string>>? DataReceived;
