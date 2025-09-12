@@ -65,7 +65,7 @@ internal class Test : BroadcastPluginBase, IProvider
         _logger = logger;
         _pluginRegistry = pluginRegistry;
         _configuration = configuration.GetSection(STANZA) ;
-        _logger.LogInformation("Starting Test Plugin");
+        _logger?.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
         myTimer.Enabled = true; // Starts the timer
         TempTimer.Elapsed += OnTempTimedEvent;
@@ -86,7 +86,6 @@ internal class Test : BroadcastPluginBase, IProvider
                         dataSets.Add(ds);
                     }
 
-        _pluginRegistry = pluginRegistry;
     }
 
     public event EventHandler<Dictionary<string, string>>? DataReceived;
