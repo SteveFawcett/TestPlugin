@@ -1,4 +1,5 @@
 ﻿using BroadcastPluginSDK.abstracts;
+using BroadcastPluginSDK.Classes;
 using BroadcastPluginSDK.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -35,6 +36,8 @@ internal class DataSet
 
 internal class Test : BroadcastPluginBase, IProvider
 {
+    private const string STANZA = "Test";
+
     private static readonly Image s_icon = Resources.green;
 
     private static readonly Timer myTimer = new(1000)
@@ -43,18 +46,30 @@ internal class Test : BroadcastPluginBase, IProvider
         AutoReset = true
     };
 
+    private static readonly Timer TempTimer = new(10000)
+    {
+        Enabled = false,
+        AutoReset = true
+    };
+
     private readonly List<DataSet> dataSets = [];
-    private readonly ILogger<IPlugin> _logger;
+    private readonly ILogger<IPlugin>? _logger;
+    private readonly IPluginRegistry? _pluginRegistry;
+    private readonly IConfiguration? _configuration;
 
     public Test() : base() { }
 
-    public Test(IConfiguration configuration , ILogger<IPlugin> logger) :
-        base(configuration, null, s_icon, "Test")
+    public Test(IConfiguration configuration , ILogger<IPlugin> logger , IPluginRegistry pluginRegistry) :
+        base(configuration, null, s_icon, STANZA )
     {
         _logger = logger;
-        _logger.LogInformation("Starting Test Plugin");
+        _pluginRegistry = pluginRegistry;
+        _configuration = configuration.GetSection(STANZA) ;
+        _logger?.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
         myTimer.Enabled = true; // Starts the timer
+        TempTimer.Elapsed += OnTempTimedEvent;
+        TempTimer.Enabled = true; // Starts the timer
 
         foreach (var config in configuration.GetSection("Test").GetChildren())
             if (config.Key == "TestData")
@@ -70,6 +85,7 @@ internal class Test : BroadcastPluginBase, IProvider
                         };
                         dataSets.Add(ds);
                     }
+
     }
 
     public event EventHandler<Dictionary<string, string>>? DataReceived;
@@ -80,10 +96,34 @@ internal class Test : BroadcastPluginBase, IProvider
         foreach (var dataSet in dataSets)
         {
             dataSet.Increase();
-            _logger.LogDebug( $"Sending Message {dataSet.Key} => {dataSet.Value.ToString()}");
+            _logger?.LogDebug( $"Sending Message {dataSet.Key} => {dataSet.Value.ToString()}");
             send.Add(dataSet.Key, dataSet.Value.ToString());
         }
 
         DataReceived?.Invoke(this, send);
+ 
+    }
+
+    private void OnTempTimedEvent(object? sender, ElapsedEventArgs e)
+    {
+        if(_pluginRegistry == null) return;
+
+        ICache? cache = _pluginRegistry.MasterCache();
+        _logger?.LogDebug("Found Cache: {cache}", cache != null ? "Yes" : "No");
+
+        if( cache == null) return;
+
+        _logger?.LogDebug("Adding Dummy Command");
+        cache?.CommandWriter(
+            new CommandItem()
+            {
+                Name = "Test Command",
+                Description = "This is a test command from the Test Plugin",
+                Command = _configuration?.GetValue<string>("Command") ?? "Empty command",
+                Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
+                Status = CommandStatus.New,
+            });
+
+        _logger?.LogDebug("Dummy Command Executed");
     }
 }
