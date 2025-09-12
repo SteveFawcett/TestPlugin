@@ -118,6 +118,8 @@ internal class Test : BroadcastPluginBase, IProvider
         cache?.CommandWriter(
             new CommandItem()
             {
+                Name = "Test Command",
+                Description = "This is a test command from the Test Plugin",
                 Command = _configuration?.GetValue<string>("Command") ?? "Empty command",
                 Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
                 Status = CommandStatus.New,
