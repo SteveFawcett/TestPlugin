@@ -4,6 +4,7 @@ using BroadcastPluginSDK.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Timers;
+using TestDataPlugin.Forms;
 using TestPlugin.Properties;
 using Timer = System.Timers.Timer;
 
@@ -57,10 +58,12 @@ internal class Test : BroadcastPluginBase, IProvider
     private readonly IPluginRegistry? _pluginRegistry;
     private readonly IConfiguration? _configuration;
 
+    public static TestPage? _infoPage;
+
     public Test() : base() { }
 
     public Test(IConfiguration configuration , ILogger<IPlugin> logger , IPluginRegistry pluginRegistry) :
-        base(configuration, null, s_icon, STANZA )
+        base(configuration, DisplayPage( configuration , logger ), s_icon, STANZA )
     {
         _logger = logger;
         _pluginRegistry = pluginRegistry;
@@ -86,6 +89,12 @@ internal class Test : BroadcastPluginBase, IProvider
                         dataSets.Add(ds);
                     }
 
+    }
+
+    public static TestPage DisplayPage(IConfiguration configuration, ILogger<IPlugin> logger)
+    {
+        _infoPage = new TestPage(configuration.GetSection( STANZA ), logger);
+        return _infoPage;
     }
 
     public event EventHandler<Dictionary<string, string>>? DataReceived;
@@ -117,8 +126,6 @@ internal class Test : BroadcastPluginBase, IProvider
         cache?.CommandWriter(
             new CommandItem()
             {
-                Name = "Test Command",
-                Description = "This is a test command from the Test Plugin",
                 Command = _configuration?.GetValue<string>("Command") ?? "Empty command",
                 Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
                 Status = CommandStatus.New,
