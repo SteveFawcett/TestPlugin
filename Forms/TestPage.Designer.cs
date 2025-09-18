@@ -1,4 +1,6 @@
-﻿namespace TestDataPlugin.Forms
+﻿using CyberDog.Controls;
+
+namespace TestPlugin.Forms
 {
     partial class TestPage
     {
@@ -30,7 +32,7 @@
         {
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            listView1 = new ListView();
+            itemsListBox = new ListPanel<DataSet>();
             comboBox1 = new ComboBox();
             Execute = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -55,14 +57,13 @@
             label1.TabIndex = 1;
             label1.Text = "Test Data Generator";
             // 
-            // listView1
+            // itemsListBox
             // 
-            listView1.BorderStyle = BorderStyle.None;
-            listView1.Location = new Point(6, 111);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(359, 330);
-            listView1.TabIndex = 2;
-            listView1.UseCompatibleStateImageBehavior = false;
+            itemsListBox.BorderStyle = BorderStyle.None;
+            itemsListBox.Location = new Point(6, 111);
+            itemsListBox.Name = "itemsListBox";
+            itemsListBox.Size = new Size(359, 330);
+            itemsListBox.TabIndex = 2;
             // 
             // comboBox1
             // 
@@ -88,7 +89,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(Execute);
             Controls.Add(comboBox1);
-            Controls.Add(listView1);
+            Controls.Add(itemsListBox);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             Name = "TestPage";
@@ -102,7 +103,7 @@
 
         private PictureBox pictureBox1;
         private Label label1;
-        private ListView listView1;
+        private ListPanel<DataSet> itemsListBox;
         private ComboBox comboBox1;
         private Button Execute;
     }

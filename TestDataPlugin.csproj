@@ -91,6 +91,7 @@
 
 	<ItemGroup>
 	  <None Include=".github\workflows\dotnet-desktop.yml" />
+	  <ProjectReference Include="..\..\sfawcett123\CyberDog\CyberDog.csproj" />
 	  <None Update="LICENSE.txt">
 	    <PackagePath>\</PackagePath>
 	    <Pack>True</Pack>

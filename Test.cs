@@ -1,35 +1,42 @@
 ﻿using BroadcastPluginSDK.abstracts;
 using BroadcastPluginSDK.Classes;
 using BroadcastPluginSDK.Interfaces;
+using CyberDog.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Data;
 using System.Timers;
-using TestDataPlugin.Forms;
+using TestPlugin.Forms;
 using TestPlugin.Properties;
 using Timer = System.Timers.Timer;
 
 namespace TestPlugin;
 
-internal class DataSet
+internal class DataSet : IUpdatableItem
 {
     public int Increment = 100;
-    public string Key = string.Empty;
     public int Maximum = 1000;
-    public int Minimum;
-    public int Value;
+    public int Minimum = 0;
 
+    public Rectangle ValueRect = Rectangle.Empty;
+    public bool Update = false;
+
+    private int _value = 0;
+    public string Value { get => _value.ToString();
+                                  set => _value = int.Parse(value); }    
+    public string Key { set; get; } = "Dummy";
     public void Increase()
     {
-        Value += Increment;
-        if (Value > Maximum)
+        _value += Increment;
+        if (_value > Maximum)
         {
-            Value = Maximum;
+            _value = Maximum;
             Increment = -Increment;
         }
 
-        if (Value < Minimum)
+        if (_value < Minimum)
         {
-            Value = Minimum;
+            _value = Minimum;
             Increment = -Increment;
         }
     }
@@ -101,16 +108,17 @@ internal class Test : BroadcastPluginBase, IProvider
 
     private void OnTimedEvent(object? sender, ElapsedEventArgs e)
     {
-        Dictionary<string, string> send = [];
-        foreach (var dataSet in dataSets)
-        {
-            dataSet.Increase();
-            _logger?.LogDebug( $"Sending Message {dataSet.Key} => {dataSet.Value.ToString()}");
-            send.Add(dataSet.Key, dataSet.Value.ToString());
-        }
+        var send = dataSets
+            .Select(dataSet =>
+            {
+                _logger?.LogDebug("Updating {key} to {value}", dataSet.Key, dataSet.Value);
+                dataSet.Increase();
+                _infoPage?.UpdateCards(dataSet);
+                return new { dataSet.Key, Value = dataSet.Value.ToString() };
+            })
+            .ToDictionary(x => x.Key, x => x.Value);
 
         DataReceived?.Invoke(this, send);
- 
     }
 
     private void OnTempTimedEvent(object? sender, ElapsedEventArgs e)

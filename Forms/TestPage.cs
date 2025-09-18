@@ -1,11 +1,9 @@
 ﻿using BroadcastPluginSDK.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using TestPlugin.Properties;
 
-namespace TestDataPlugin.Forms
+namespace TestPlugin.Forms
 {
     public partial class TestPage : UserControl , IInfoPage
     {
@@ -43,10 +41,15 @@ namespace TestDataPlugin.Forms
 
             foreach( var test in configuration?.GetSection( "Command" ).GetChildren() ?? [])
             {
-                comboBox1.Items.Add(test.Value );
+                comboBox1.Items.Add(test.Value ?? "Unknown");
             }
 
             comboBox1.SelectedIndex = 0;
+        }
+
+        internal void UpdateCards( DataSet dataSet )
+        {
+            itemsListBox.AddUpdateItem( dataSet );
         }
     }
 }
