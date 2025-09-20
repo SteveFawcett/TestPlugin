@@ -39,12 +39,12 @@ namespace TestPlugin.Forms
         {
             comboBox1.Items.Clear();
 
-            foreach( var test in configuration?.GetSection( "Value" ).GetChildren() ?? [])
+            foreach( var test in configuration?.GetSection("Command").GetChildren() ?? [])
             {
                 comboBox1.Items.Add(test.Value ?? "Unknown");
             }
 
-            //comboBox1.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 0;
         }
 
         internal void UpdateCards( DataSet dataSet )
