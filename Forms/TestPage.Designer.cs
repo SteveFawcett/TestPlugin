@@ -32,7 +32,7 @@ namespace TestPlugin.Forms
         {
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            itemsListBox = new ListPanel<DataSet>();
+            listPanel = new ListPanel<DataSet>();
             comboBox1 = new ComboBox();
             Execute = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -57,13 +57,14 @@ namespace TestPlugin.Forms
             label1.TabIndex = 1;
             label1.Text = "Test Data Generator";
             // 
-            // itemsListBox
+            // listPanel
             // 
-            itemsListBox.BorderStyle = BorderStyle.None;
-            itemsListBox.Location = new Point(6, 111);
-            itemsListBox.Name = "itemsListBox";
-            itemsListBox.Size = new Size(359, 330);
-            itemsListBox.TabIndex = 2;
+            listPanel.BorderStyle = BorderStyle.None;
+            listPanel.Location = new Point(6, 111);
+            listPanel.Name = "listPanel";
+            listPanel.Size = new Size(350, 330);
+            listPanel.BackColor = Color.White;
+            listPanel.TabIndex = 2;
             // 
             // comboBox1
             // 
@@ -89,7 +90,7 @@ namespace TestPlugin.Forms
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(Execute);
             Controls.Add(comboBox1);
-            Controls.Add(itemsListBox);
+            Controls.Add(listPanel);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             Name = "TestPage";
@@ -103,7 +104,7 @@ namespace TestPlugin.Forms
 
         private PictureBox pictureBox1;
         private Label label1;
-        private ListPanel<DataSet> itemsListBox;
+        private ListPanel<DataSet> listPanel;
         private ComboBox comboBox1;
         private Button Execute;
     }

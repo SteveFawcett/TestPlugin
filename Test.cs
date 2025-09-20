@@ -6,8 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Timers;
+using TestDataPlugin.Properties;
 using TestPlugin.Forms;
-using TestPlugin.Properties;
 using Timer = System.Timers.Timer;
 
 namespace TestPlugin;
@@ -18,8 +18,7 @@ internal class DataSet : IUpdatableItem
     public int Maximum = 1000;
     public int Minimum = 0;
 
-    public Rectangle ValueRect = Rectangle.Empty;
-    public bool Update = false;
+    public bool Update = true;
 
     private int _value = 0;
     public string Value { get => _value.ToString();
@@ -27,6 +26,8 @@ internal class DataSet : IUpdatableItem
     public string Key { set; get; } = "Dummy";
     public void Increase()
     {
+        if (!Update) return;
+
         _value += Increment;
         if (_value > Maximum)
         {
@@ -130,15 +131,15 @@ internal class Test : BroadcastPluginBase, IProvider
 
         if( cache == null) return;
 
-        _logger?.LogDebug("Adding Dummy Command");
+        _logger?.LogDebug("Adding Dummy Value");
         cache?.CommandWriter(
             new CommandItem()
             {
-                Command = _configuration?.GetValue<string>("Command") ?? "Empty command",
+                Value = _configuration?.GetValue<string>("Value") ?? "Empty command",
                 Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
                 Status = CommandStatus.New,
             });
 
-        _logger?.LogDebug("Dummy Command Executed");
+        _logger?.LogDebug("Dummy Value Executed");
     }
 }

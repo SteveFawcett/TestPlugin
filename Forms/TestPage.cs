@@ -1,7 +1,7 @@
 ﻿using BroadcastPluginSDK.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using TestPlugin.Properties;
+using TestDataPlugin.Properties;
 
 namespace TestPlugin.Forms
 {
@@ -39,17 +39,17 @@ namespace TestPlugin.Forms
         {
             comboBox1.Items.Clear();
 
-            foreach( var test in configuration?.GetSection( "Command" ).GetChildren() ?? [])
+            foreach( var test in configuration?.GetSection( "Value" ).GetChildren() ?? [])
             {
                 comboBox1.Items.Add(test.Value ?? "Unknown");
             }
 
-            comboBox1.SelectedIndex = 0;
+            //comboBox1.SelectedIndex = 0;
         }
 
         internal void UpdateCards( DataSet dataSet )
         {
-            itemsListBox.AddUpdateItem( dataSet );
+            listPanel.AddUpdateItem( dataSet );
         }
     }
 }
