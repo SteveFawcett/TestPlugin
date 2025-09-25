@@ -32,7 +32,7 @@ namespace TestPlugin.Forms
         {
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            listPanel = new ListPanel<DataSet>();
+            listPanel = new CyberDog.Controls.ListPanel<TestPlugin.DataSet>();
             comboBox1 = new ComboBox();
             Execute = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -59,11 +59,12 @@ namespace TestPlugin.Forms
             // 
             // listPanel
             // 
-            listPanel.BorderStyle = BorderStyle.None;
+            listPanel.AutoScroll = true;
+            listPanel.BackColor = Color.White;
+            listPanel.ItemSelectMode = CyberDog.Controls.SelectionMode.Single;
             listPanel.Location = new Point(6, 111);
             listPanel.Name = "listPanel";
             listPanel.Size = new Size(350, 330);
-            listPanel.BackColor = Color.White;
             listPanel.TabIndex = 2;
             // 
             // comboBox1
@@ -83,6 +84,7 @@ namespace TestPlugin.Forms
             Execute.TabIndex = 4;
             Execute.Text = "Test";
             Execute.UseVisualStyleBackColor = true;
+            Execute.Click += RunCommand;
             // 
             // TestPage
             // 

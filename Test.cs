@@ -55,34 +55,23 @@ internal class Test : BroadcastPluginBase, IProvider
         AutoReset = true
     };
 
-    private static readonly Timer TempTimer = new(10000)
-    {
-        Enabled = false,
-        AutoReset = true
-    };
 
     private readonly List<DataSet> dataSets = [];
     private readonly ILogger<IPlugin>? _logger;
-    private readonly IPluginRegistry? _pluginRegistry;
-    private readonly IConfiguration? _configuration;
 
     public static TestPage? _infoPage;
 
     public Test() : base() { }
 
     public Test(IConfiguration configuration , ILogger<IPlugin> logger , IPluginRegistry pluginRegistry) :
-        base(configuration, DisplayPage( configuration , logger ), s_icon, STANZA )
+        base(configuration, DisplayPage( configuration , logger  , pluginRegistry ), s_icon, STANZA )
     {
         _logger = logger;
-        _pluginRegistry = pluginRegistry;
-        _configuration = configuration.GetSection(STANZA) ;
         _logger?.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
         myTimer.Enabled = true; // Starts the timer
-        TempTimer.Elapsed += OnTempTimedEvent;
-        TempTimer.Enabled = true; // Starts the timer
 
-        foreach (var config in configuration.GetSection("Test").GetChildren())
+        foreach (var config in configuration.GetSection( STANZA ).GetChildren())
             if (config.Key == "TestData")
                 foreach (var dataSet in config.GetChildren())
                     if (!string.IsNullOrEmpty(dataSet["variable"]))
@@ -99,9 +88,17 @@ internal class Test : BroadcastPluginBase, IProvider
 
     }
 
-    public static TestPage DisplayPage(IConfiguration configuration, ILogger<IPlugin> logger)
+    public static TestPage DisplayPage(IConfiguration configuration, ILogger<IPlugin> logger , IPluginRegistry pluginRegistry)
     {
+
         _infoPage = new TestPage(configuration.GetSection( STANZA ), logger);
+
+        _infoPage.CommandIssued += (s, e) =>
+        {
+            ICache? cache = pluginRegistry.MasterCache();
+            cache?.CommandWriter(e);
+        };
+
         return _infoPage;
     }
 
@@ -120,26 +117,5 @@ internal class Test : BroadcastPluginBase, IProvider
             .ToDictionary(x => x.Key, x => x.Value);
 
         DataReceived?.Invoke(this, send);
-    }
-
-    private void OnTempTimedEvent(object? sender, ElapsedEventArgs e)
-    {
-        if(_pluginRegistry == null) return;
-
-        ICache? cache = _pluginRegistry.MasterCache();
-        _logger?.LogDebug("Found Cache: {cache}", cache != null ? "Yes" : "No");
-
-        if( cache == null) return;
-
-        _logger?.LogDebug("Adding Dummy Value");
-        cache?.CommandWriter(
-            new CommandItem()
-            {
-                Value = _configuration?.GetValue<string>("Value") ?? "Empty command",
-                Parameters = new Dictionary<string, string>() { { "Time", DateTime.Now.ToString("HH:mm:ss") } },
-                Status = CommandStatus.New,
-            });
-
-        _logger?.LogDebug("Dummy Value Executed");
     }
 }
