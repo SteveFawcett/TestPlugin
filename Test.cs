@@ -102,7 +102,7 @@ internal class Test : BroadcastPluginBase, IProvider
         return _infoPage;
     }
 
-    public event EventHandler<Dictionary<string, string>>? DataReceived;
+    public event EventHandler<CacheData>? DataReceived;
 
     private void OnTimedEvent(object? sender, ElapsedEventArgs e)
     {
@@ -116,6 +116,7 @@ internal class Test : BroadcastPluginBase, IProvider
             })
             .ToDictionary(x => x.Key, x => x.Value);
 
-        DataReceived?.Invoke(this, send);
+        
+        DataReceived?.Invoke(this, new CacheData() {  Data = send , Prefix = CachePrefixes.DATA });
     }
 }
