@@ -123,16 +123,17 @@ namespace TestPlugin.Forms
             if(comboBox1.SelectedItem is null) return;
             var cmd = comboBox1.SelectedItem.ToString();
 
-            if ( string.IsNullOrEmpty( cmd )) return;  
+            if ( string.IsNullOrEmpty( cmd )) return;
 
-            logger?.LogInformation("Running Command: {Command}", cmd );
+            CommandTypes type = (CommandTypes)Enum.Parse(typeof(CommandTypes), cmdType.SelectedItem?.ToString() ?? "Unknown");
+
+            logger?.LogInformation("Running Command: {CommandType} - {Command}", type,  cmd );
 
             var execcmd = new CommandItem()
             {
                 Value = cmd,
                 Status = CommandStatus.New,
-                CommandType = CommandTypes.OperatingSystem
-
+                CommandType = type, 
             };
 
             CommandIssued?.Invoke( this , execcmd );
