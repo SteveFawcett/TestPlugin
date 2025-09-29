@@ -118,7 +118,7 @@ namespace TestPlugin.Forms
             listPanel?.AddUpdateItem(dataSet);
         }
 
-        private void RunCommand(object sender, EventArgs e)
+        private void SubmitCommand(object sender, EventArgs e)
         {
             if(comboBox1.SelectedItem is null) return;
             var cmd = comboBox1.SelectedItem.ToString();
@@ -127,7 +127,7 @@ namespace TestPlugin.Forms
 
             CommandTypes type = (CommandTypes)Enum.Parse(typeof(CommandTypes), cmdType.SelectedItem?.ToString() ?? "Unknown");
 
-            logger?.LogInformation("Running Command: {CommandType} - {Command}", type,  cmd );
+            logger?.LogInformation("Submitting Command: {CommandType} - {Command}", type,  cmd );
 
             var execcmd = new CommandItem()
             {

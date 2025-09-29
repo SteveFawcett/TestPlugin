@@ -75,7 +75,7 @@ namespace TestPlugin.Forms
             Execute.TabIndex = 4;
             Execute.Text = "Test";
             Execute.UseVisualStyleBackColor = true;
-            Execute.Click += RunCommand;
+            Execute.Click += SubmitCommand;
             // 
             // valueUpdater
             // 
