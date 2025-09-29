@@ -1,5 +1,6 @@
 ﻿using BroadcastPluginSDK.Classes;
 using BroadcastPluginSDK.Interfaces;
+using CyberDog.Controls;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
@@ -9,24 +10,73 @@ namespace TestPlugin.Forms
 {
     public partial class TestPage : UserControl, IInfoPage
     {
-        private IConfiguration? configuration;
-        private ILogger<IPlugin>? logger;
+        private readonly IConfiguration? configuration;
+        private readonly ILogger<Test>? logger;
+        private ListPanel<DataSet>? listPanel;
 
         public event EventHandler<CommandItem>? CommandIssued;
+        public event EventHandler<bool>? UpdateValueChanged;
 
         public TestPage()
         {
             InitializeComponent();
+            InitializeTestPage();
         }
 
-        public TestPage(IConfiguration configuration, ILogger<IPlugin> logger)
+        public TestPage(IConfiguration configuration, ILogger<Test> logger)
         {
             this.configuration = configuration;
             this.logger = logger;
-            InitializeComponent();
-            DisplayIcon();
 
-            PopulateTests();
+            InitializeComponent();
+            InitializeTestPage();
+        }
+
+        private void InitializeTestPage()
+        {
+            listPanel = new ListPanel<DataSet>
+            {
+                Location = new Point(5, 110),
+                Size = new Size(380, 400)
+            };
+            Controls.Add(listPanel);
+
+            DisplayIcon();
+            PopulateCmdType();
+            SetCommands();
+
+            cmdType.SelectedIndexChanged += (s, e) =>
+            {
+                SetCommands();
+            };
+
+            valueUpdater.CheckedChanged += ValueUpdater_CheckedChanged;
+        }
+
+        private void SetCommands()
+        {
+            CommandTypes type = (CommandTypes)Enum.Parse(typeof(CommandTypes), cmdType.SelectedItem?.ToString() ?? "Unknown");
+
+            PopulateTests(type);
+
+        }   
+        private void PopulateCmdType()
+        {
+            cmdType.Items.Clear();
+            foreach (var type in Enum.GetValues(typeof(CommandTypes)))
+            {
+                cmdType.Items.Add(type);
+            }
+            if (cmdType.Items.Count > 0) cmdType.SelectedIndex = 0;
+        }
+
+        private void ValueUpdater_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (sender == null) return;
+
+            CheckBox chk = (CheckBox)sender;
+
+            UpdateValueChanged?.Invoke(this, chk.Checked);
         }
 
         public Control GetControl()
@@ -39,13 +89,25 @@ namespace TestPlugin.Forms
             pictureBox1.Image = Resources.green;
         }
 
-        public void PopulateTests()
+        public void PopulateTests(CommandTypes selectedType)
         {
             comboBox1.Items.Clear();
 
-            foreach (var test in configuration?.GetSection("Command").GetChildren() ?? [])
+            logger?.LogInformation("Populating Commands for Type: {Type}", selectedType.ToString() );
+
+            if ( selectedType == CommandTypes.OperatingSystem )
             {
-                comboBox1.Items.Add(test.Value ?? "Unknown");
+                foreach (var test in configuration?.GetSection("OsCommand").GetChildren() ?? [])
+                {
+                    comboBox1.Items.Add(test.Value ?? "Unknown");
+                }
+            }
+            else if( selectedType == CommandTypes.Simulator )
+            {
+                foreach (var test in configuration?.GetSection("SimCommand").GetChildren() ?? [])
+                {
+                    comboBox1.Items.Add(test.Value ?? "Unknown");
+                }
             }
 
             if (comboBox1.Items.Count > 0) comboBox1.SelectedIndex = 0;
@@ -53,7 +115,7 @@ namespace TestPlugin.Forms
 
         internal void UpdateCards(DataSet dataSet)
         {
-            listPanel.AddUpdateItem(dataSet);
+            listPanel?.AddUpdateItem(dataSet);
         }
 
         private void RunCommand(object sender, EventArgs e)
@@ -69,6 +131,8 @@ namespace TestPlugin.Forms
             {
                 Value = cmd,
                 Status = CommandStatus.New,
+                CommandType = CommandTypes.OperatingSystem
+
             };
 
             CommandIssued?.Invoke( this , execcmd );

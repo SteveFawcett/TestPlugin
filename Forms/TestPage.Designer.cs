@@ -32,9 +32,10 @@ namespace TestPlugin.Forms
         {
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            listPanel = new CyberDog.Controls.ListPanel<TestPlugin.DataSet>();
             comboBox1 = new ComboBox();
             Execute = new Button();
+            valueUpdater = new CheckBox();
+            cmdType = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -57,28 +58,18 @@ namespace TestPlugin.Forms
             label1.TabIndex = 1;
             label1.Text = "Test Data Generator";
             // 
-            // listPanel
-            // 
-            listPanel.AutoScroll = true;
-            listPanel.BackColor = Color.White;
-            listPanel.ItemSelectMode = CyberDog.Controls.SelectionMode.Single;
-            listPanel.Location = new Point(6, 111);
-            listPanel.Name = "listPanel";
-            listPanel.Size = new Size(350, 330);
-            listPanel.TabIndex = 2;
-            // 
             // comboBox1
             // 
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(385, 111);
+            comboBox1.Location = new Point(530, 112);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(239, 23);
+            comboBox1.Size = new Size(122, 23);
             comboBox1.TabIndex = 3;
             // 
             // Execute
             // 
-            Execute.Location = new Point(630, 111);
+            Execute.Location = new Point(658, 112);
             Execute.Name = "Execute";
             Execute.Size = new Size(60, 23);
             Execute.TabIndex = 4;
@@ -86,13 +77,33 @@ namespace TestPlugin.Forms
             Execute.UseVisualStyleBackColor = true;
             Execute.Click += RunCommand;
             // 
+            // valueUpdater
+            // 
+            valueUpdater.AutoSize = true;
+            valueUpdater.Location = new Point(385, 152);
+            valueUpdater.Name = "valueUpdater";
+            valueUpdater.Size = new Size(99, 19);
+            valueUpdater.TabIndex = 5;
+            valueUpdater.Text = "Value Updater";
+            valueUpdater.UseVisualStyleBackColor = true;
+            // 
+            // cmdType
+            // 
+            cmdType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmdType.FormattingEnabled = true;
+            cmdType.Location = new Point(385, 112);
+            cmdType.Name = "cmdType";
+            cmdType.Size = new Size(139, 23);
+            cmdType.TabIndex = 6;
+            // 
             // TestPage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(cmdType);
+            Controls.Add(valueUpdater);
             Controls.Add(Execute);
             Controls.Add(comboBox1);
-            Controls.Add(listPanel);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             Name = "TestPage";
@@ -106,8 +117,9 @@ namespace TestPlugin.Forms
 
         private PictureBox pictureBox1;
         private Label label1;
-        private ListPanel<DataSet> listPanel;
         private ComboBox comboBox1;
         private Button Execute;
+        private CheckBox valueUpdater;
+        private ComboBox cmdType;
     }
 }

@@ -43,7 +43,7 @@ internal class DataSet : IUpdatableItem
     }
 }
 
-internal class Test : BroadcastPluginBase, IProvider
+public class Test : BroadcastPluginBase, IProvider
 {
     private const string STANZA = "Test";
 
@@ -57,19 +57,19 @@ internal class Test : BroadcastPluginBase, IProvider
 
 
     private readonly List<DataSet> dataSets = [];
-    private readonly ILogger<IPlugin>? _logger;
+    private readonly ILogger<Test>? _logger;
 
     public static TestPage? _infoPage;
 
     public Test() : base() { }
 
-    public Test(IConfiguration configuration , ILogger<IPlugin> logger , IPluginRegistry pluginRegistry) :
+    public Test(IConfiguration configuration , ILogger<Test> logger , IPluginRegistry pluginRegistry) :
         base(configuration, DisplayPage( configuration , logger  , pluginRegistry ), s_icon, STANZA )
     {
         _logger = logger;
         _logger?.LogInformation("Starting Test Plugin");
         myTimer.Elapsed += OnTimedEvent;
-        myTimer.Enabled = true; // Starts the timer
+        myTimer.Enabled = false; // Starts the timer
 
         foreach (var config in configuration.GetSection( STANZA ).GetChildren())
             if (config.Key == "TestData")
@@ -88,10 +88,16 @@ internal class Test : BroadcastPluginBase, IProvider
 
     }
 
-    public static TestPage DisplayPage(IConfiguration configuration, ILogger<IPlugin> logger , IPluginRegistry pluginRegistry)
+
+    public static TestPage DisplayPage(IConfiguration configuration, ILogger<Test> logger , IPluginRegistry pluginRegistry)
     {
 
         _infoPage = new TestPage(configuration.GetSection( STANZA ), logger);
+
+        _infoPage.UpdateValueChanged += (s, e) =>
+        {
+            myTimer.Enabled = e;
+        };
 
         _infoPage.CommandIssued += (s, e) =>
         {
